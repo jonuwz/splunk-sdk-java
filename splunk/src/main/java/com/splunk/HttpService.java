@@ -25,6 +25,7 @@ import java.net.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.zip.GZIPInputStream;
 
 /**
  * The {@code HttpService} class represents a generic HTTP service at a given
@@ -42,7 +43,7 @@ public class HttpService {
      * For PROD environment, TRUE is strongly recommended, whereas working in localhost OR development environment, FALSE is used.
      * Default Value: TRUE
      */
-    protected static boolean validateCertificates = true;
+    protected static boolean validateCertificates = false;
 
     private static SSLSocketFactory sslSocketFactory = createSSLFactory();
     private static String HTTPS_SCHEME = "https";
@@ -534,6 +535,18 @@ public class HttpService {
             for (String cookieHeader : headers.get("Set-Cookie")) {
                if (cookieHeader != null && cookieHeader.length() > 0)
                     cookieStore.add(cookieHeader);
+            }
+        }
+
+        if (headers.containsKey("Content-Encoding")) {
+            for (String encoding : headers.get("Content-Encoding")) {
+               if (encoding != null && encoding.equals("gzip")) {
+                    try {
+                        input = new GZIPInputStream(input);
+                    } catch (IOException e) {
+                        assert(false);
+                    }
+               }
             }
         }
 

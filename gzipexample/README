@@ -1,0 +1,9 @@
+You'll need the splunk-1.9.5.jar built by mvn package from the /splunk directory.
+This contains the handling of gzipped responses
+
+
+This example uses serviceArgs to set a custom Accept-Encoding header on the responses.
+
+java -cp ./splunk-1.9.5.jar:./splunk-search-1.0.jar:./commons-cli-1.2.jar SplunkSearch --scheme=https --output_mode=json --compressed 1 "search index=main"
+
+You can verify the size of the responses by looking at the splunkd_access logs
